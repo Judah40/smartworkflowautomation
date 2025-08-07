@@ -1,10 +1,14 @@
 import express, { Request, Response } from "express";
 import { authRoutes } from "./routes/auth.route";
+import { port } from "./config/default";
+import cors from "cors";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors({
+  
+}));
 
 // Register routes
 app.use("/api/auth", authRoutes);
@@ -23,6 +27,6 @@ app.use((req, res) => {
 });
 
 // Start the server – Always the last thing
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });

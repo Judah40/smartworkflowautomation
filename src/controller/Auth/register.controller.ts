@@ -11,7 +11,8 @@ export const registerUsersController = async (
     // Here you would typically call a service to handle the registration logic
     // For example: await registerUserService(name, email, password);
 
-    const registeredUser = registerUsersService(email, password, name);
+    // Assuming registerUsersService is a function that handles user registration
+    const registeredUser = await registerUsersService(email, password, name);
 
     res.status(201).json({
       message: "User registered successfully",

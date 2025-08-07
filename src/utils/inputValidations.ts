@@ -50,6 +50,14 @@ export const updatePasswordSchema = yup.object().shape({
     .required("New password is required"),
 });
 
+//schema for verification token validation
+const VerificationTokenSchema = yup.object().shape({
+  token: yup
+    .string()
+    .required("token is required")
+    .length(11, "Code must be exactly 11 characters")
+    .matches(/^[a-zA-Z0-9]+$/, "Code must be alphanumeric only"),
+});
 //change password validation schema
 export const resetPasswordSchema = yup.object().shape({
   password: yup
@@ -154,6 +162,25 @@ export const forgetPasswordValidation = (
 ): void => {
   forgetPasswordSchema
     .validate(req.body, { abortEarly: false })
+    .then(() => next())
+    .catch((err) => {
+      const errorResponse = {
+        message: "Validation failed",
+        errors: err.inner.map((e: { path?: string; message: string }) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      };
+
+      return res.status(400).json(errorResponse);
+    });
+};
+export const verificationTokenValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  VerificationTokenSchema.validate(req.body, { abortEarly: false })
     .then(() => next())
     .catch((err) => {
       const errorResponse = {

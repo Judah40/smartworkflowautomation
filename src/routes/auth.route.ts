@@ -11,7 +11,9 @@ import {
   userRegistrationValidation,
   userSignInValidation,
   resetPasswordValidation,
+  verificationTokenValidation,
 } from "../utils/inputValidations";
+import { verifyUserToken } from "../controller/Auth/verifyUserToken.controller";
 
 const router = Router();
 
@@ -30,5 +32,7 @@ router.patch(
   resetPasswordValidation,
   resetPasswordController
 );
+
+router.post("/verifyToken", verificationTokenValidation, verifyUserToken);
 
 export const authRoutes = router;

@@ -24,8 +24,11 @@ export const registerUsersService = async (
       email,
       password: hashedPassword,
       verificationToken: verificationToken,
-      verificationTokenExpiresAt
+      verificationTokenExpiresAt,
     },
+    select:{
+      verificationToken: true,
+    }
   });
 
   return newUser;
