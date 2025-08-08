@@ -4,16 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { jwtTokenSecret } from "../config/default";
 import jwt from "jsonwebtoken";
 
-// Extend Express Request interface to include 'user'
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-      };
-    }
-  }
-}
+
 //GET AUTH TOKEN
 interface AuthTokenRequest extends Request {
   headers: {
@@ -24,76 +15,58 @@ interface AuthTokenRequest extends Request {
 
 interface AuthTokenResponse extends Response {}
 
-const getAuthToken = (
-  req: AuthTokenRequest,
-  res: AuthTokenResponse
-): string | AuthTokenResponse => {
-  try {
-    const authHeader = req.headers.authorization || null;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res
-        .status(401)
-        .json({ error: "Authorization header missing or incorrect format." });
-    }
-
-    return authHeader.split(" ")[1];
-  } catch (error) {
-    console.error("GET AUTH TOKEN ERROR: ", error);
-    throw error;
+function getAuthToken(req: Request): string | null {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return null;
   }
-};
+  return authHeader.split(" ")[1];
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //VERIFY JWT TOKEN
-const requireAuthenticatedUser = async (
+export const requireAuthenticatedUser = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const token = getAuthToken(req, res);
+    const token = getAuthToken(req);
 
-    if (typeof token !== "string") {
-      // getAuthToken already sent a response, just return
-      return;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ error: "Authorization header missing or incorrect format." });
     }
 
-    const decodedToken = jwt.verify(token, jwtTokenSecret);
+    const decoded = jwt.verify(token, jwtTokenSecret) as jwt.JwtPayload;
 
-    if (
-      !decodedToken ||
-      typeof decodedToken === "string" ||
-      !(decodedToken as jwt.JwtPayload).id
-    ) {
+    if (!decoded?.id) {
       return res
         .status(401)
         .json({ message: "Invalid Authentication Token. Please Try Again" });
     }
-    req.user = {
-      id: (decodedToken as jwt.JwtPayload).id,
-    };
-    return next();
+
+    // ✅ TypeScript now knows req.user exists
+    req.user = { id: decoded.id, email: decoded.email };
+
+    next();
   } catch (error) {
-    console.error("REQUIRE AUTHENTICATED USER ERROR: ", error);
-    const errorMessage =
-      typeof error === "object" && error !== null && "message" in error
-        ? (error as { message?: string }).message
-        : undefined;
+    const message =
+      error instanceof Error ? error.message : "Authentication Failed";
 
-    if (errorMessage === "invalid signature") {
+    if (message === "invalid signature") {
       return res
         .status(401)
         .json({ message: "Invalid Authentication Token. Please Try Again" });
     }
-    if (errorMessage === "jwt expired") {
+    if (message === "jwt expired") {
       return res
         .status(401)
-        .json({ message: "Session Expired Please Login to Continue" });
+        .json({ message: "Session Expired. Please Login Again" });
     }
-    return res
-      .status(401)
-      .json({ message: "Authentication Failed. Please Try Again!" });
+
+    return res.status(401).json({ message });
   }
 };
-
-export default requireAuthenticatedUser;

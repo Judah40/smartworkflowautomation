@@ -35,4 +35,6 @@ router.patch(
 
 router.post("/verifyToken", verificationTokenValidation, verifyUserToken);
 
+
+
 export const authRoutes = router;

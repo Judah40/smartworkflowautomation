@@ -67,6 +67,72 @@ export const resetPasswordSchema = yup.object().shape({
   verificationToken: yup.string().required("Verification token is required"),
 });
 
+//create professional profile schema
+export const professionalProfileSchema = yup.object({
+  bio: yup
+    .string()
+    .min(10, "Bio must be at least 10 characters long")
+    .max(500, "Bio cannot exceed 500 characters")
+    .required("Bio is a required field"),
+
+  company: yup
+    .string()
+    .min(2, "Company name must be at least 2 characters long")
+    .max(100, "Company name cannot exceed 100 characters")
+    .required("Company is a required field"),
+
+  companyLocation: yup
+    .string()
+    .min(2, "Company location must be at least 2 characters long")
+    .max(100, "Company location cannot exceed 100 characters")
+    .required("Company location is a required field"),
+
+  position: yup
+    .string()
+    .min(2, "Position must be at least 2 characters long")
+    .max(100, "Position cannot exceed 100 characters")
+    .required("Position is a required field"),
+
+  portfolioUrl: yup
+    .string()
+    .url("Portfolio URL must be a valid URL")
+    .max(255, "URL cannot exceed 255 characters")
+    .notRequired(), // The portfolio URL is an optional field
+});
+
+//update professional profile
+export const updateProfessionalProfileSchema = yup.object({
+  bio: yup
+    .string()
+    .min(10, "Bio must be at least 10 characters long")
+    .max(500, "Bio cannot exceed 500 characters")
+    .notRequired(), // Field is optional for updates
+
+  company: yup
+    .string()
+    .min(2, "Company name must be at least 2 characters long")
+    .max(100, "Company name cannot exceed 100 characters")
+    .notRequired(), // Field is optional for updates
+
+  companyLocation: yup
+    .string()
+    .min(2, "Company location must be at least 2 characters long")
+    .max(100, "Company location cannot exceed 100 characters")
+    .notRequired(), // Field is optional for updates
+
+  position: yup
+    .string()
+    .min(2, "Position must be at least 2 characters long")
+    .max(100, "Position cannot exceed 100 characters")
+    .notRequired(), // Field is optional for updates
+
+  portfolioUrl: yup
+    .string()
+    .url("Portfolio URL must be a valid URL")
+    .max(255, "URL cannot exceed 255 characters")
+    .notRequired(), // Field is optional for updates
+});
+
 //validations
 import { Request, Response, NextFunction } from "express";
 
@@ -181,6 +247,47 @@ export const verificationTokenValidation = (
   next: NextFunction
 ): void => {
   VerificationTokenSchema.validate(req.body, { abortEarly: false })
+    .then(() => next())
+    .catch((err) => {
+      const errorResponse = {
+        message: "Validation failed",
+        errors: err.inner.map((e: { path?: string; message: string }) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      };
+
+      return res.status(400).json(errorResponse);
+    });
+};
+
+export const professionalProfileValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  professionalProfileSchema
+    .validate(req.body, { abortEarly: false })
+    .then(() => next())
+    .catch((err) => {
+      const errorResponse = {
+        message: "Validation failed",
+        errors: err.inner.map((e: { path?: string; message: string }) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      };
+
+      return res.status(400).json(errorResponse);
+    });
+};
+export const updateProfessionalProfileValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  updateProfessionalProfileSchema
+    .validate(req.body, { abortEarly: false })
     .then(() => next())
     .catch((err) => {
       const errorResponse = {
