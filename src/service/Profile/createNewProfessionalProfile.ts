@@ -4,6 +4,8 @@ import prisma from "../../utils/prismaDefault";
 export const setupProfessionalProfile = async (userProfile: UserProfile) => {
   const { bio, company, companyLocation, position, userId, portfolioUrl } =
     userProfile;
+
+  // 1. Check if the user exists
   const userExist = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -11,19 +13,17 @@ export const setupProfessionalProfile = async (userProfile: UserProfile) => {
     throw new Error("User Not Found");
   }
 
-  const userProfileAlreadyCreated = await prisma.professionalProfile.findUnique(
-    {
-      where: {
-        userId,
-      },
-    }
-  );
+  // 2. Check if a profile already exists for this user
+  const userProfileAlreadyCreated = await prisma.professionalProfile.findUnique({
+    where: { userId },
+  });
 
+  // 3. If a profile is found, throw an error and stop execution
   if (userProfileAlreadyCreated) {
     throw new Error("User Profile Already Set");
   }
 
-  //setup new profile
+  // 4. If no profile exists, create a new one
   const NewProfile = await prisma.professionalProfile.create({
     data: {
       bio,
@@ -33,9 +33,14 @@ export const setupProfessionalProfile = async (userProfile: UserProfile) => {
       position,
       userId,
     },
-    omit: {
-      createdAt: true,
-      updatedAt: true,
+    select: {
+      id: true,
+      bio: true,
+      company: true,
+      companyLocation: true,
+      position: true,
+      portfolioUrl: true,
+      userId: true,
     },
   });
 

@@ -7,6 +7,7 @@ export const updateProfessionalProfileController = async (
 ): Promise<void> => {
   const { bio, company, companyLocation, position, portfolioUrl } = req.body;
   const id = req.user?.id;
+  console.log(bio)
   try {
     await updateUserProfessionalProfile({
       bio,

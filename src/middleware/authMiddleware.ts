@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from "express";
 import { jwtTokenSecret } from "../config/default";
 import jwt from "jsonwebtoken";
 
-
 //GET AUTH TOKEN
 interface AuthTokenRequest extends Request {
   headers: {
@@ -17,12 +16,12 @@ interface AuthTokenResponse extends Response {}
 
 function getAuthToken(req: Request): string | null {
   const authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
   return authHeader.split(" ")[1];
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //VERIFY JWT TOKEN
@@ -40,16 +39,18 @@ export const requireAuthenticatedUser = (
         .json({ error: "Authorization header missing or incorrect format." });
     }
 
-    const decoded = jwt.verify(token, jwtTokenSecret) as jwt.JwtPayload;
-
-    if (!decoded?.id) {
+    const decoded = jwt.verify(
+      token,
+      jwtTokenSecret || "default"
+    ) as jwt.JwtPayload;
+    if (!decoded?.data) {
       return res
         .status(401)
         .json({ message: "Invalid Authentication Token. Please Try Again" });
     }
 
     // ✅ TypeScript now knows req.user exists
-    req.user = { id: decoded.id, email: decoded.email };
+    req.user = { id: decoded?.data.id, email: decoded?.data.email };
 
     next();
   } catch (error) {

@@ -9,7 +9,7 @@ export const getProfessionalProfileController = async (
     const id = req.user?.id;
     const professionalProfile = await getUserProfessionalProfile(id || "");
     res.status(200).json({
-      message: "successfully setup profile",
+      message: "successfully gotten profile",
       data: professionalProfile,
     });
     return;

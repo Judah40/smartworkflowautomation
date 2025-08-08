@@ -1,7 +1,12 @@
 import jwt from "jsonwebtoken";
 import { jwtTokenSecret } from "../config/default";
 // Function to generate a JWT token for user authentication
-export const UserTokenGenerator = (data: string) => {
+
+interface dataTypes {
+  email: string;
+  id: string;
+}
+export const UserTokenGenerator = (data: dataTypes) => {
   const Jwt = jwt.sign({ data }, jwtTokenSecret || "default", {
     expiresIn: "1h", // Token expiration time
   });

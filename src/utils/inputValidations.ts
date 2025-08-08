@@ -68,7 +68,7 @@ export const resetPasswordSchema = yup.object().shape({
 });
 
 //create professional profile schema
-export const professionalProfileSchema = yup.object({
+export const professionalProfileSchema = yup.object().shape({
   bio: yup
     .string()
     .min(10, "Bio must be at least 10 characters long")
@@ -101,7 +101,7 @@ export const professionalProfileSchema = yup.object({
 });
 
 //update professional profile
-export const updateProfessionalProfileSchema = yup.object({
+export const updateProfessionalProfileSchema = yup.object().shape({
   bio: yup
     .string()
     .min(10, "Bio must be at least 10 characters long")
@@ -204,7 +204,6 @@ export const resetPasswordValidation = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log(req.body);
   resetPasswordSchema
     .validate(req.body, { abortEarly: false })
     .then(() => next())
@@ -287,7 +286,7 @@ export const updateProfessionalProfileValidation = (
   next: NextFunction
 ): void => {
   updateProfessionalProfileSchema
-    .validate(req.body, { abortEarly: false })
+    .validate(req.body || {}, { abortEarly: false })
     .then(() => next())
     .catch((err) => {
       const errorResponse = {

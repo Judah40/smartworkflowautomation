@@ -5,25 +5,35 @@ export const createProfessionalProfileController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const { bio, company, companyLocation, position, portfolioUrl } = req.body;
+  console.log(req.body);
+//   if (!req.body || Object.keys(req.body).length === 0) {
+//     res.status(400).json({ error: "Request body is missing" });
+//     return;
+//   }
+  const { bio, company, companyLocation, position, portfolioUrl } =
+    req.body||{} ;
 
-    const id = req.user?.id;
+  // ✅ Ensure the auth middleware attached req.user
+  if (!req.user?.id) {
+    res.status(401).json({ error: "Unauthorized: No user ID found" });
+    return;
+  }
+
+  try {
     await setupProfessionalProfile({
       bio,
       company,
       companyLocation,
       position,
-      userId: id || "",
+      userId: req.user.id, // No fallback empty string
       portfolioUrl,
     });
-    res.status(200).json({
-      message: "successfully setup profile",
+
+    res.status(201).json({
+      message: "Successfully setup profile",
     });
-    return;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
-    return;
   }
 };

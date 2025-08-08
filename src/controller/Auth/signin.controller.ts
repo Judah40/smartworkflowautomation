@@ -11,7 +11,7 @@ export const signInController = async (
   try {
     const user = await signInService(email, password);
 
-    const token = await UserTokenGenerator(user.id);
+    const token = await UserTokenGenerator({ id: user.id, email: user.email });
     res.status(200).json({
       message: "Sign-in successful",
       user: {
