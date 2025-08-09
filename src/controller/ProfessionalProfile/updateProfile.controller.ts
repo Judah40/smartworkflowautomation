@@ -9,7 +9,6 @@ export const updateProfessionalProfileController = async (
   const { bio, company, companyLocation, position, portfolioUrl } = req.body;
   const id = req.user?.id;
   try {
-    console.log("Calling service...");
     const updateProfile = await updateUserProfessionalProfile({
       bio,
       company,
@@ -18,7 +17,6 @@ export const updateProfessionalProfileController = async (
       userId: id || "",
       portfolioUrl,
     });
-    console.log("Service completed");
 
     res.status(201).json({
       message: "succesfully updated profile",

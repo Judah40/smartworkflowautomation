@@ -26,4 +26,6 @@ router.patch(
 //GET
 router.get("/", getProfessionalProfileController);
 
+
+
 export const professionalRoute = router;

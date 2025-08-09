@@ -39,6 +39,7 @@ export const uploadProfilePictureController = async (
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
+    return
   }
 };
 
@@ -77,6 +78,7 @@ export const updateProfilePictureController = async (
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
+    return
   }
 };
 
@@ -105,6 +107,7 @@ export const deleteProfilePictureController = async (
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
+    return
   }
 };
 

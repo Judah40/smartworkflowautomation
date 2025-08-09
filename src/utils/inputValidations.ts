@@ -133,6 +133,36 @@ export const updateProfessionalProfileSchema = yup.object().shape({
     .notRequired(), // Field is optional for updates
 });
 
+//social links validation schema
+export const socialLinksSchema = yup.object().shape({
+  linkedIn: yup
+    .string()
+    .url("LinkedIn must be a valid URL")
+    .nullable()
+    .optional(),
+  facebook: yup
+    .string()
+    .url("Facebook must be a valid URL")
+    .nullable()
+    .optional(),
+  instagram: yup
+    .string()
+    .url("Instagram must be a valid URL")
+    .nullable()
+    .optional(),
+  github: yup.string().url("GitHub must be a valid URL").nullable().optional(),
+  X: yup.string().url("X (Twitter) must be a valid URL").nullable().optional(),
+  youtube: yup
+    .string()
+    .url("YouTube must be a valid URL")
+    .nullable()
+    .optional(),
+  website: yup
+    .string()
+    .url("Website must be a valid URL")
+    .nullable()
+    .optional(),
+});
 //validations
 import { Request, Response, NextFunction } from "express";
 
@@ -286,6 +316,26 @@ export const updateProfessionalProfileValidation = (
   next: NextFunction
 ): void => {
   updateProfessionalProfileSchema
+    .validate(req.body || {}, { abortEarly: false })
+    .then(() => next())
+    .catch((err) => {
+      const errorResponse = {
+        message: "Validation failed",
+        errors: err.inner.map((e: { path?: string; message: string }) => ({
+          field: e.path,
+          message: e.message,
+        })),
+      };
+
+      return res.status(400).json(errorResponse);
+    });
+};
+export const setupSocialLinksValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  socialLinksSchema
     .validate(req.body || {}, { abortEarly: false })
     .then(() => next())
     .catch((err) => {

@@ -5,6 +5,7 @@ import { port } from "./config/default";
 import cors from "cors";
 import { verifyUserToken } from "./service/Auth/verifiyUserToken";
 import { requireAuthenticatedUser } from "./middleware/authMiddleware";
+import { socialRoute } from "./routes/socialLinks.route";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(
   requireAuthenticatedUser,
   professionalRoute
 );
+app.use("/api/socials", requireAuthenticatedUser, socialRoute);
 // Default test route
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, Smart Workflow Automation Hub!");
