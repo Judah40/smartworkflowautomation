@@ -12,7 +12,7 @@ export const getUserProfessionalProfile = async (userId: string) => {
       userId: true,
     },
   });
-  // console.log(professionalProfile);
+  console.log(professionalProfile);
   if (!professionalProfile) {
     throw new Error("Professional Profile not found");
   }
