@@ -8,7 +8,9 @@ export const setupSocialLinksController = async (
   const { linkedIn, facebook, instagram, github, X, youtube, website } =
     req.body;
   if (!req.user?.id) {
-    res.status(401).json({ error: "Unauthorized: No user ID found" });
+    res
+      .status(401)
+      .json({ error: "Unauthorized: No user ID found", status: 401 });
     return;
   }
   try {
@@ -25,10 +27,11 @@ export const setupSocialLinksController = async (
     res.status(200).json({
       message: "successfully added social link",
       data: setupSocialLinks,
+      status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status: 400 });
     return;
   }
 };

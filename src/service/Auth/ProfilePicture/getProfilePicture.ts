@@ -9,11 +9,11 @@ export const getProfilePictureService = async ({
   const profilePictureName = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      ProfilePictureUrl: true,
+      profilePictureUrl: true,
     },
   });
 
-  const filepath = `profile_pictures/${profilePictureName?.ProfilePictureUrl}`;
+  const filepath = `profile_pictures/${profilePictureName?.profilePictureUrl}`;
   const expiresInSeconds = 60 * 60; // 1 hour
 
   const { data, error } = await supabaseClient.storage

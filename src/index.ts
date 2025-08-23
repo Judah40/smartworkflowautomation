@@ -6,9 +6,24 @@ import cors from "cors";
 import { verifyUserToken } from "./service/Auth/verifiyUserToken";
 import { requireAuthenticatedUser } from "./middleware/authMiddleware";
 import { socialRoute } from "./routes/socialLinks.route";
-
+import "./config/passport";
 const app = express();
+import session from "express-session";
+import passport from "./config/passport";
+app.use(
+  session({
+    secret: "supersecret", // put in .env
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // true if HTTPS
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  })
+);
 
+app.use(passport.initialize());
+app.use(passport.session());
 // Parse JSON safely
 app.use(express.json({ limit: "10mb" })); // add a limit to avoid DOS attacks
 // ✅ Handle invalid JSON parsing errors
@@ -21,7 +36,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 
-app.use(cors({}));
+app.use(
+  cors({
+    origin: "*", // allow all origins
+  })
+);
 
 // ✅ Ensure body is never undefined for POST/PUT/PATCH
 app.use((req: Request, res: Response, next: NextFunction) => {

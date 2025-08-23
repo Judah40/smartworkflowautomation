@@ -25,7 +25,7 @@ export const addSocialLinksService = async (socials: socialTypes) => {
   const safeUpdates = Object.fromEntries(
     Object.entries(updates).filter(([_, v]) => v !== undefined)
   );
-  console.log(safeUpdates);
+  // console.log(safeUpdates);
 
   if (Object.keys(safeUpdates).length === 0) {
     throw new Error("No valid fields provided to update.");

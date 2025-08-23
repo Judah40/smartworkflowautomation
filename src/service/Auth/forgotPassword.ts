@@ -6,9 +6,7 @@ export const resetPassword = async (
   verificationToken: string,
   password: string
 ) => {
-
-  
-  const user = await prisma.user.findUnique({
+  const user = await prisma.account.findUnique({
     where: { verificationToken },
   });
 
@@ -18,14 +16,18 @@ export const resetPassword = async (
 
   const hashedNewPassword = await bcrypt.hash(password, 10);
 
-  const updatedUser = await prisma.user.update({
+  const updatedUser = await prisma.account.update({
     where: { verificationToken },
     data: {
       password: hashedNewPassword,
       verificationToken: null, // Clear the token after password reset
     },
     select: {
-      isVerified: true,
+      user: {
+        select: {
+          isVerified: true,
+        },
+      },
     },
   });
 
@@ -34,15 +36,25 @@ export const resetPassword = async (
 
 // Function to check if a user exists by email
 export const checkUserExists = async (email: string) => {
-  const user = await prisma.user.findUnique({
-    where: { email },
+  const user = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: "email",
+        providerAccountId: email,
+      },
+    },
   });
 
   if (!user) {
     throw new Error("User not found");
   }
-  const updateVerificationToken = await prisma.user.update({
-    where: { email },
+  const updateVerificationToken = await prisma.account.update({
+    where: {
+      provider_providerAccountId: {
+        provider: "email",
+        providerAccountId: email,
+      },
+    },
     data: {
       verificationToken: Math.random().toString(36).substring(2, 15), // Generate a new token
     },

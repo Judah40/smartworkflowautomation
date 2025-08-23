@@ -19,7 +19,7 @@ export const verifyVerificationToken = async (
 ): Promise<Boolean> => {
   try {
     // Verify the token using your verification logic
-    const user = await prisma.user.findUnique({
+    const user = await prisma.account.findUnique({
       where: { verificationToken },
     });
 
@@ -30,17 +30,25 @@ export const verifyVerificationToken = async (
     ) {
       throw new Error("Invalid or expired verification token");
     }
-    const updateVerificationToken = await prisma.user.update({
+    const updateVerificationToken = await prisma.account.update({
       where: { verificationToken },
       data: {
         verificationToken: null, // Clear the token after verification
-        isVerified: true, // Assuming you want to mark the user as verified
+        user: {
+          update: {
+            isVerified: true, // Mark the user as verified
+          },
+        }, // Assuming you want to mark the user as verified
       },
       select: {
-        isVerified: true,
+        user: {
+          select: {
+            isVerified: true,
+          },
+        },
       },
     });
-    return updateVerificationToken.isVerified;
+    return updateVerificationToken.user.isVerified;
   } catch (error) {
     throw new Error("Invalid or expired verification token");
   }

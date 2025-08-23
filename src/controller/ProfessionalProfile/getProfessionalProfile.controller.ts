@@ -11,11 +11,12 @@ export const getProfessionalProfileController = async (
     res.status(200).json({
       message: "successfully gotten profile",
       data: professionalProfile,
+      status:200
     });
     return;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status:400 });
     return;
   }
 };

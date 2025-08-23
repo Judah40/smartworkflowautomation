@@ -1,4 +1,5 @@
 import { Request } from "express";
+import "express";
 
 // Define the shape of your user object
 interface UserPayload {
@@ -10,5 +11,15 @@ interface UserPayload {
 declare module "express" {
   export interface Request {
     user?: UserPayload; // Use `?` if the property is optional
+  }
+}
+
+
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: {
+      id: string;
+      email: string;
+    };
   }
 }

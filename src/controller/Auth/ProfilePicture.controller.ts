@@ -9,6 +9,7 @@ export const uploadProfilePictureController = async (
   res: Response
 ): Promise<void> => {
   const file = req.file as Express.Multer.File | undefined;
+  console.log(file);
 
   try {
     if (!file) {
@@ -39,7 +40,7 @@ export const uploadProfilePictureController = async (
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
-    return
+    return;
   }
 };
 
@@ -78,7 +79,7 @@ export const updateProfilePictureController = async (
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     res.status(400).json({ error: errorMessage });
-    return
+    return;
   }
 };
 
@@ -98,16 +99,18 @@ export const deleteProfilePictureController = async (
     if (!deleteImage) {
       res.send({
         message: "could not delete profile picture",
+        status: 400,
       });
     }
 
     res.status(200).json({
       message: "successfully deleted profile picture",
+      status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
-    return
+    res.status(400).json({ error: errorMessage, status: 400 });
+    return;
   }
 };
 

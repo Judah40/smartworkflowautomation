@@ -39,12 +39,13 @@ export const resetPasswordController = async (
 
     res.status(200).json({
       message: "Password reset successful",
-      isVerified: updatedUser.isVerified,
+      isVerified: updatedUser.user.isVerified,
+      status: 200,
     });
     return;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status: 400 });
     return;
   }
 };

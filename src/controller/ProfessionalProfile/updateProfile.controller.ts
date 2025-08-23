@@ -21,10 +21,11 @@ export const updateProfessionalProfileController = async (
     res.status(201).json({
       message: "succesfully updated profile",
       data: updateProfile,
+      status: 200,
     });
   } catch (error) {
     console.error("Error in controller", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status: 400 });
   }
 };

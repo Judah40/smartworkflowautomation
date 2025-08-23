@@ -6,12 +6,12 @@ export const createProfessionalProfileController = async (
   res: Response
 ): Promise<void> => {
   console.log(req.body);
-//   if (!req.body || Object.keys(req.body).length === 0) {
-//     res.status(400).json({ error: "Request body is missing" });
-//     return;
-//   }
+  //   if (!req.body || Object.keys(req.body).length === 0) {
+  //     res.status(400).json({ error: "Request body is missing" });
+  //     return;
+  //   }
   const { bio, company, companyLocation, position, portfolioUrl } =
-    req.body||{} ;
+    req.body || {};
 
   // ✅ Ensure the auth middleware attached req.user
   if (!req.user?.id) {
@@ -31,9 +31,10 @@ export const createProfessionalProfileController = async (
 
     res.status(201).json({
       message: "Successfully setup profile",
+      status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status: 400 });
   }
 };

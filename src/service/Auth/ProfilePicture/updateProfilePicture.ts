@@ -13,11 +13,11 @@ export const updateProfilePictureService = async ({
   const profilePictureName = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      ProfilePictureUrl: true,
+      profilePictureUrl: true,
     },
   });
 
-  const filepath = `profile_pictures/${profilePictureName?.ProfilePictureUrl}`;
+  const filepath = `profile_pictures/${profilePictureName?.profilePictureUrl}`;
 
   const { data, error } = await supabaseClient.storage
     .from("smartworkflowautomationhubbucket")

@@ -17,21 +17,34 @@ datasource db {
 
 
 model User {
-  id        String      @id @default(uuid())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  password String
-  isVerified Boolean @default(false)
-  verificationToken String? @unique
-  verificationTokenExpiresAt DateTime
-  ProfilePictureUrl String?
-  ProfessionalProfile ProfessionalProfile?
-  SocialLinks SocialLinks?
-  @@index([email])
+  id                          String      @id @default(uuid())
+  name                        String
+  email                       String      @unique
+  createdAt                   DateTime    @default(now())
+  updatedAt                   DateTime    @updatedAt
+  isVerified                  Boolean     @default(false)
+  profilePictureUrl           String?
+  professionalProfile         ProfessionalProfile?
+  socialLinks                 SocialLinks?
 
+  accounts                    Account[]
+  @@index([email])
 }
+
+model Account {
+  id                 String   @id @default(uuid())
+  userId             String
+  provider           String   // e.g. "email" | "google"
+  providerAccountId  String   // e.g. Google user id
+  password           String?  // only for email provider
+  verificationToken  String?  @unique
+  verificationTokenExpiresAt DateTime?
+
+  user               User     @relation(fields: [userId], references: [id])
+  @@unique([provider, providerAccountId])
+}
+
+
 
 model ProfessionalProfile {
   id String @id @default(uuid())

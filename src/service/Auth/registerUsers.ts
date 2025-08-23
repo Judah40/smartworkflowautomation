@@ -22,13 +22,21 @@ export const registerUsersService = async (
     data: {
       name,
       email,
+      // password: hashedPassword,
+      // verificationToken: verificationToken,
+      // verificationTokenExpiresAt,
+    },
+  });
+
+  await prisma.account.create({
+    data: {
+      userId: newUser.id,
+      provider: "email",
+      providerAccountId: email,
       password: hashedPassword,
-      verificationToken: verificationToken,
+      verificationToken,
       verificationTokenExpiresAt,
     },
-    select:{
-      verificationToken: true,
-    }
   });
 
   return newUser;

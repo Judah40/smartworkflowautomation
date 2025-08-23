@@ -28,7 +28,7 @@ export const uploadProfilePictureService = async ({
   await prisma.user.update({
     where: { id: userId },
     data: {
-      ProfilePictureUrl: randomName,
+      profilePictureUrl: randomName,
     },
   });
 

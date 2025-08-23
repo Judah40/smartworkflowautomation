@@ -6,7 +6,9 @@ export const getSocialsLinksController = async (
   res: Response
 ): Promise<void> => {
   if (!req.user?.id) {
-    res.status(401).json({ error: "Unauthorized: No user ID found" });
+    res
+      .status(401)
+      .json({ error: "Unauthorized: No user ID found", status: 401 });
     return;
   }
   try {
@@ -14,11 +16,12 @@ export const getSocialsLinksController = async (
     res.status(200).json({
       message: "successfully gotten social Links",
       data: socialLinks,
+      status: 200,
     });
     return;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status: 400 });
     return;
   }
 };

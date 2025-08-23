@@ -17,11 +17,12 @@ export const registerUsersController = async (
     res.status(201).json({
       message: "User registered successfully",
       user: registeredUser,
+      status:200
     });
     return;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: errorMessage, status:400 });
     return;
   }
 };

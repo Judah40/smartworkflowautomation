@@ -1,22 +1,27 @@
 import prisma from "../../utils/prismaDefault";
 import bcrypt from "bcrypt";
 export const signInService = async (email: string, password: string) => {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    omit: {
-      verificationToken: true, // Omit verification token as it's not needed after sign-in
+  const account = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: "email",
+        providerAccountId: email,
+      },
+    },
+    select: {
+      user: true,
+      password: true,
     },
   });
 
-  console.log(user);
-  if (!user) {
-    throw new Error("User not found");
+  if (!account || !account.password) {
+    throw new Error("Invalid credentials: Account not found");
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await bcrypt.compare(password, account.password);
   if (!isPasswordValid) {
     throw new Error("Invalid password");
   }
 
-  return user;
+  return account.user;
 };

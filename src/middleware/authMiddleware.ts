@@ -29,14 +29,15 @@ export const requireAuthenticatedUser = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   try {
     const token = getAuthToken(req);
 
     if (!token) {
-      return res
+      res
         .status(401)
         .json({ error: "Authorization header missing or incorrect format." });
+      return;
     }
 
     const decoded = jwt.verify(
@@ -44,9 +45,10 @@ export const requireAuthenticatedUser = (
       jwtTokenSecret || "default"
     ) as jwt.JwtPayload;
     if (!decoded?.data) {
-      return res
+      res
         .status(401)
         .json({ message: "Invalid Authentication Token. Please Try Again" });
+      return;
     }
 
     // ✅ TypeScript now knows req.user exists
@@ -58,16 +60,17 @@ export const requireAuthenticatedUser = (
       error instanceof Error ? error.message : "Authentication Failed";
 
     if (message === "invalid signature") {
-      return res
+      res
         .status(401)
         .json({ message: "Invalid Authentication Token. Please Try Again" });
+      return;
     }
     if (message === "jwt expired") {
-      return res
-        .status(401)
-        .json({ message: "Session Expired. Please Login Again" });
+      res.status(401).json({ message: "Session Expired. Please Login Again" });
+      return;
     }
 
-    return res.status(401).json({ message });
+    res.status(401).json({ message });
+    return;
   }
 };
