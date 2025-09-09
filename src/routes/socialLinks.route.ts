@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { setupSocialLinksValidation } from "../utils/inputValidations";
+import { setupSocialLinksValidation } from "../utils/validations/inputValidations";
 import { setupSocialLinksController } from "../controller/SocialLinks/setupSocialLinks.controller";
 import { getSocialsLinksController } from "../controller/SocialLinks/getSocialLinks.controller";
 

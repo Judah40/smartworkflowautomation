@@ -12,7 +12,7 @@ import {
   userSignInValidation,
   resetPasswordValidation,
   verificationTokenValidation,
-} from "../utils/inputValidations";
+} from "../utils/validations/inputValidations";
 import { verifyUserToken } from "../controller/Auth/verifyUserToken.controller";
 import {
   deleteProfilePictureController,

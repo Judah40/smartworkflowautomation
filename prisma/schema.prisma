@@ -26,7 +26,7 @@ model User {
   profilePictureUrl           String?
   professionalProfile         ProfessionalProfile?
   socialLinks                 SocialLinks?
-
+  workflows                    Workflows[]
   accounts                    Account[]
   @@index([email])
 }
@@ -78,3 +78,66 @@ userId String @unique
   createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 }
+
+
+model Workflows{
+  id String @id @default(uuid())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  name String
+  active Boolean @default(true) 
+  createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+workflow_steps  Workflow_steps[]
+Workflow_runs Workflow_runs[]
+}
+
+enum StepType {
+  TRIGGER
+  CONDITION
+  ACTION
+}
+
+model Workflow_steps{
+  id String @id @default(uuid())
+  workflow  Workflows @relation(fields: [workflowId], references: [id], onDelete:Cascade )
+  workflowId String @unique
+  step_type StepType
+  config Json
+  order Int
+  Workflow_logs Workflow_logs[]
+}
+
+enum RunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+}
+model Workflow_runs {
+  id String @id @default(uuid())
+  workflow  Workflows @relation(fields: [workflowId], references: [id], onDelete:Cascade )
+  workflowId String @unique
+  status RunStatus @default(PENDING)
+  logs Workflow_logs[]
+  startedAt DateTime      @default(now())
+  finishedAt DateTime?
+
+}
+
+enum LogStatus {
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+model Workflow_logs {
+    id String @id @default(uuid())
+    run Workflow_runs @relation(fields: [runId], references: [id])
+    runId String
+    step Workflow_steps @relation(fields: [stepId], references: [id])
+    stepId String
+    status LogStatus
+    message String
+    timestamp DateTime @default(now())
+}
+

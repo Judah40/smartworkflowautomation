@@ -4,7 +4,7 @@ import { createProfessionalProfileController } from "../controller/ProfessionalP
 import {
   professionalProfileValidation,
   updateProfessionalProfileValidation,
-} from "../utils/inputValidations";
+} from "../utils/validations/inputValidations";
 import { getProfessionalProfileController } from "../controller/ProfessionalProfile/getProfessionalProfile.controller";
 import { updateProfessionalProfileController } from "../controller/ProfessionalProfile/updateProfile.controller";
 
@@ -25,7 +25,5 @@ router.patch(
 
 //GET
 router.get("/", getProfessionalProfileController);
-
-
 
 export const professionalRoute = router;
